@@ -3,198 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUSHANT_KHATRI.DEV</title>
+    <title>SUSHANT_KHATRI // INTERSTELLAR_DECK</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            user-select: none;
         }
         body {
-            background-color: #05050a;
-            color: #00ff66;
+            background-color: #020208;
+            color: #00f0ff;
             font-family: 'Courier New', Courier, monospace;
-            overflow-x: hidden;
+            overflow: hidden;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
+            position: relative;
         }
 
-        /* Scanline glitch effect */
-        body::before {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 999;
-            background-size: 100% 2px, 3px 100%;
+        /* Starfield Canvas Background */
+        #starfield {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
             pointer-events: none;
         }
 
-        .terminal-container {
-            width: 100%;
-            max-width: 900px;
-            background: rgba(10, 10, 20, 0.9);
-            border: 2px solid #00ff66;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.2);
+        /* Scanline & Vignette Overlay */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
+                        radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(0,0,0,0.7) 100%);
+            background-size: 100% 4px, 100% 100%;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        /* Big animated header */
+        /* Main Cyber Frame */
+        .gui-mainframe {
+            position: relative;
+            z-index: 5;
+            width: 95%;
+            max-width: 950px;
+            background: rgba(5, 10, 25, 0.75);
+            border: 2px solid #00f0ff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15), inset 0 0 15px rgba(0, 240, 255, 0.1);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Top Bar Info Decorators */
+        .gui-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #00f0ff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
         h1 {
-            font-size: 3rem;
+            font-size: 2.8rem;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px #00ff66;
-            animation: pulse 2s infinite alternate;
+            letter-spacing: 6px;
+            color: #fff;
+            text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+            margin: 10px 0;
         }
 
         .subtitle {
-            font-size: 1.2rem;
-            color: #38bdf8;
-            margin-bottom: 30px;
-            border-right: 2px solid #38bdf8;
-            white-space: nowrap;
-            overflow: hidden;
-            width: 0;
-            animation: typing 3.5s steps(40, end) forwards, blink 0.75s step-end infinite;
+            font-size: 1.1rem;
+            color: #ff0077;
+            text-shadow: 0 0 5px #ff0077;
+            margin-bottom: 20px;
         }
 
-        /* Interactive Javascript Section */
-        .terminal-log {
-            background: #000;
-            border-left: 3px solid #38bdf8;
+        /* Tactical HUD Log Box */
+        .hud-display {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #ff0077;
+            border-left: 4px solid #ff0077;
             padding: 15px;
-            margin-bottom: 35px;
-            font-size: 0.95rem;
-            color: #a7f3d0;
-            min-height: 100px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            color: #a3e635;
+            height: 110px;
+            overflow-y: hidden;
+            box-shadow: inset 0 0 10px rgba(255, 0, 119, 0.1);
         }
 
-        /* Big Neon Buttons */
-        .grid-links {
+        /* Grid Interface Link Buttons */
+        .link-deck {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
 
-        @media (max-width: 600px) {
-            .grid-links { grid-template-columns: 1fr; }
-            h1 { font-size: 2rem; }
+        @media (max-width: 650px) {
+            .link-deck { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
         }
 
-        .neon-btn {
+        .gui-btn {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            padding: 20px;
-            font-size: 1.3rem;
+            align-items: flex-start;
+            padding: 15px 25px;
+            font-size: 1.1rem;
             font-weight: bold;
             text-decoration: none;
-            text-transform: uppercase;
-            border: 2px solid #00ff66;
-            color: #00ff66;
-            border-radius: 6px;
-            background: transparent;
+            letter-spacing: 2px;
+            border: 1px solid #00f0ff;
+            color: #00f0ff;
+            background: rgba(0, 240, 255, 0.03);
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s cubic-bezier(0.15, 0.85, 0.45, 1);
             position: relative;
-            overflow: hidden;
         }
 
-        /* Javascript dynamically targets these on hover */
-        .neon-btn:hover {
-            color: #05050a;
-            background: #00ff66;
-            box-shadow: 0 0 20px #00ff66, 0 0 40px #00ff66;
-            transform: translateY(-3px);
+        .gui-btn .btn-sub {
+            font-size: 0.7rem;
+            color: #88a0c0;
+            margin-top: 4px;
+            letter-spacing: 1px;
+            text-transform: none;
         }
 
-        .neon-btn.yt {
-            border-color: #ff0055;
-            color: #ff0055;
+        /* Hover Mechanics controlled by CSS & JS rules */
+        .gui-btn:hover {
+            color: #020208;
+            background: #00f0ff;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+            transform: scale(1.02);
         }
-        .neon-btn.yt:hover {
-            background: #ff0055;
-            box-shadow: 0 0 20px #ff0055, 0 0 40px #ff0055;
+        .gui-btn:hover .btn-sub {
+            color: #020208;
+        }
+
+        /* Alternate color theme for main platforms */
+        .gui-btn.alt {
+            border-color: #ff0077;
+            color: #ff0077;
+            background: rgba(255, 0, 119, 0.03);
+        }
+        .gui-btn.alt:hover {
             color: #fff;
-        }
-
-        /* Animations */
-        @keyframes pulse {
-            from { text-shadow: 0 0 5px #00ff66, 0 0 10px #00ff66; }
-            to { text-shadow: 0 0 15px #00ff66, 0 0 30px #00ff66; }
-        }
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-        @keyframes blink {
-            from, to { border-color: transparent }
-            50% { border-color: #38bdf8; }
+            background: #ff0077;
+            box-shadow: 0 0 25px rgba(255, 0, 119, 0.6);
         }
     </style>
 </head>
 <body>
 
-<div class="terminal-container">
-    <h1 id="main-title">SUSHANT_KHATRI</h1>
-    <div class="subtitle">> CS50x // CODEINPLACE // GAME_DEV_INIT...</div>
+<canvas id="starfield"></canvas>
+<div class="overlay"></div>
 
-    <!-- JavaScript injects logs here dynamically -->
-    <div class="terminal-log" id="log-box">
-        [SYSTEM] Initializing Runexel Workspace...<br>
+<div class="gui-mainframe">
+    <div class="gui-header">
+        <div>SYS_STATUS: ACTIVE</div>
+        <div id="live-coord">GRID: X-00 // Y-00</div>
     </div>
 
-    <div class="grid-links">
-        <a class="neon-btn yt" href="https://www.youtube.com/@Sutolix" target="_blank" data-info="Accessing Main Hub: Gaming challenges & Blox Fruits streams.">🎬 SUTOLIX YT</a>
-        <a class="neon-btn yt" href="https://www.youtube.com/@Runexel" target="_blank" data-info="Accessing Dev Core: Code tutorials, scripts, and devlogs.">💻 RUNEXEL CODING</a>
-        <a class="neon-btn" href="https://gitlab.com/SushantKhatri" target="_blank" data-info="Connecting to Fox-Net: Syncing open-source code repositories.">🦊 GITLAB HUB</a>
-        <a class="neon-btn" href="https://sushantkhatridev.blogspot.com" target="_blank" data-info="Booting Intel Log: Reading recent tech & developer thoughts.">📝 DEV BLOG</a>
+    <h1>SUSHANT KHATRI</h1>
+    <div class="subtitle">// NAV_DECK_INTERFACE_v2.5</div>
+
+    <div class="hud-display" id="hud-log">
+        [SYS] Initializing localized stellar starfield...<br>
+        [SYS] Audio synthesis microcode compiled.<br>
+    </div>
+
+    <div class="link-deck">
+        <a class="gui-btn alt" href="https://www.youtube.com/@Sutolix" target="_blank" data-desc="Frequencies tuned to gaming challenges & Blox Fruits broadcasts.">
+            🎬 SUTOLIX YT
+            <span class="btn-sub">Main Gaming & Entertainment Node</span>
+        </a>
+        <a class="gui-btn alt" href="https://www.youtube.com/@Runexel" target="_blank" data-desc="Accessing code architecture, tutorial archives, and project devlogs.">
+            💻 RUNEXEL DEV
+            <span class="btn-sub">Software Engineering and Scripts</span>
+        </a>
+        <a class="gui-btn" href="https://gitlab.com/SushantKhatri" target="_blank" data-desc="Establishing connection to secure decentralized code framework vaults.">
+            🦊 GITLAB PROFILE
+            <span class="btn-sub">Open-source Repositories & Utilities</span>
+        </a>
+        <a class="gui-btn" href="https://sushantkhatridev.blogspot.com" target="_blank" data-desc="Downloading text array modules containing developer logs.">
+            📝 RECENT BLOGS
+            <span class="btn-sub">Tech Logs & Conceptual Work</span>
+        </a>
     </div>
 </div>
 
 <script>
-    // Cool Interactive JavaScript Logic
-    const logBox = document.getElementById('log-box');
-    const buttons = document.querySelectorAll('.neon-btn');
+    const hud = document.getElementById('hud-log');
+    const coordDisplay = document.getElementById('live-coord');
 
-    // Simulated background terminal logs
-    const bootSequences = [
-        "[OK] Python logic compiler active.",
-        "[OK] C-Lang memory cells secure.",
-        "[STATUS] Harvard CS50x routines running cleanly.",
-        "[READY] Awaiting user command input..."
-    ];
+    // --- INTERACTIVE STARFIELD BACKGROUND (CANVAS) ---
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    let numStars = 140;
+    let speedMultiplier = 1;
 
-    let lineIndex = 0;
-    function printBootLog() {
-        if (lineIndex < bootSequences.length) {
-            logBox.innerHTML += `<br>${bootSequences[lineIndex]}`;
-            lineIndex++;
-            setTimeout(printBootLog, 800);
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Initialize Star Instances
+    for (let i = 0; i < numStars; i++) {
+        stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            z: Math.random() * canvas.width,
+            size: Math.random() * 1.5 + 0.5
+        });
+    }
+
+    function drawStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+        
+        for (let i = 0; i < numStars; i++) {
+            let star = stars[i];
+            star.z -= 1.5 * speedMultiplier;
+            
+            if (star.z <= 0) {
+                star.z = canvas.width;
+                star.x = Math.random() * canvas.width;
+                star.y = Math.random() * canvas.height;
+            }
+
+            // Simple 3D projection shift
+            let k = 128 / star.z;
+            let px = (star.x - canvas.width / 2) * k + canvas.width / 2;
+            let py = (star.y - canvas.height / 2) * k + canvas.height / 2;
+
+            if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+                let size = star.size * k;
+                ctx.beginPath();
+                ctx.arc(px, py, Math.min(size, 3), 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        requestAnimationFrame(drawStars);
+    }
+    drawStars();
+
+    // Mouse Tracking Mechanics
+    window.addEventListener('mousemove', (e) => {
+        let xPerc = Math.floor((e.clientX / window.innerWidth) * 99);
+        let yPerc = Math.floor((e.clientY / window.innerHeight) * 99);
+        coordDisplay.innerText = `GRID: X-${xPerc} // Y-${yPerc}`;
+    });
+
+    // --- SYNTHETIC WEB AUDIO API FUNCTIONS ---
+    let audioCtx = null;
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
     }
-    // Start boot simulation after initial load
-    setTimeout(printBootLog, 1000);
 
-    // Dynamic hover responses using JavaScript
+    function playBeep(freq, duration, type = 'sine') {
+        try {
+            initAudio();
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch(e) {}
+    }
+
+    // --- EVENT INTERACTION HANDLERS ---
+    const buttons = document.querySelectorAll('.gui-btn');
+    const bootLogs = [
+        "[OK] CS50x Subroutines Mounted.",
+        "[OK] Stanford CodeInPlace Engine Hooked.",
+        "[SYSTEM] Starfield engine responsive. System ready."
+    ];
+
+    let logCounter = 0;
+    function runBooter() {
+        if (logCounter < bootLogs.length) {
+            hud.innerHTML += `<br>${bootLogs[logCounter]}`;
+            playBeep(600, 0.05, 'square');
+            logCounter++;
+            setTimeout(runBooter, 700);
+        }
+    }
+    setTimeout(runBooter, 800);
+
     buttons.forEach(button => {
         button.addEventListener('mouseenter', () => {
-            const infoText = button.getAttribute('data-info');
-            logBox.innerHTML = `[NET_LOG] ${infoText}`;
-            logBox.style.borderColor = window.getComputedStyle(button).borderColor;
+            speedMultiplier = 4; // Warp speed space background
+            const desc = button.getAttribute('data-desc');
+            hud.innerHTML = `[NAV_COM] ${desc}`;
+            playBeep(880, 0.08, 'triangle');
         });
 
-        button.forEach && button.addEventListener('mouseleave', () => {
-            logBox.innerHTML = `[STATUS] System Idle. Selection logged.`;
-            logBox.style.borderColor = "#38bdf8";
+        button.addEventListener('mouseleave', () => {
+            speedMultiplier = 1; // Back to cruise speed
+            hud.innerHTML = `[SYS] System cruise status active. Starfield stable.`;
+        });
+
+        button.addEventListener('click', () => {
+            playBeep(1200, 0.15, 'sawtooth');
         });
     });
 </script>
