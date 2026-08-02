@@ -180,7 +180,7 @@
 
     <div class="hud-display" id="hud-log">
         [SYS] Initializing localized stellar starfield...<br>
-        [SYS] Audio synthesis microcode compiled.<br>
+        [SYS] Audio synthesis microcode compiled. Click/Interact anywhere to engage audio drivers.<br>
     </div>
 
     <div class="link-deck">
@@ -274,11 +274,23 @@
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
     }
+
+    // Unlock audio context cleanly on the first user interaction anywhere on the page
+    ['click', 'keydown', 'touchstart'].forEach(eventType => {
+        window.addEventListener(eventType, () => {
+            initAudio();
+        }, { once: true });
+    });
 
     function playBeep(freq, duration, type = 'sine') {
         try {
             initAudio();
+            if (!audioCtx || audioCtx.state !== 'running') return;
+            
             let osc = audioCtx.createOscillator();
             let gain = audioCtx.createGain();
             
