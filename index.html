@@ -263,211 +263,485 @@ target="_blank">
 
 </div>
 
-
-
-
 <script>
 
-
-// STARFIELD
-
-
-const canvas=document.getElementById("starfield");
-
-const ctx=canvas.getContext("2d");
+const hud = document.getElementById('hud-log');
+const coordDisplay = document.getElementById('live-coord');
 
 
-canvas.width=innerWidth;
-canvas.height=innerHeight;
+// ===============================
+// STARFIELD ENGINE
+// ===============================
+
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+
+let stars = [];
+let numStars = 140;
+let speedMultiplier = 1;
 
 
-let stars=[];
+function resizeCanvas(){
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+}
+
+window.addEventListener('resize', resizeCanvas);
+
+resizeCanvas();
 
 
-for(let i=0;i<200;i++){
 
-stars.push({
+for(let i = 0; i < numStars; i++){
 
-x:Math.random()*canvas.width,
+    stars.push({
 
-y:Math.random()*canvas.height,
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        z: Math.random()*canvas.width,
+        size: Math.random()*1.5+0.5
 
-z:Math.random()*canvas.width
+    });
+
+}
+
+
+
+function drawStars(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    ctx.fillStyle="rgba(255,255,255,.8)";
+
+
+    stars.forEach(star=>{
+
+
+        star.z -= 1.5 * speedMultiplier;
+
+
+        if(star.z <= 0){
+
+            star.z = canvas.width;
+
+            star.x = Math.random()*canvas.width;
+
+            star.y = Math.random()*canvas.height;
+
+        }
+
+
+
+        let k = 128 / star.z;
+
+
+        let px =
+        (star.x-canvas.width/2)*k
+        + canvas.width/2;
+
+
+        let py =
+        (star.y-canvas.height/2)*k
+        + canvas.height/2;
+
+
+
+        if(px>=0 && px<=canvas.width &&
+           py>=0 && py<=canvas.height){
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                px,
+                py,
+                Math.min(star.size*k,3),
+                0,
+                Math.PI*2
+            );
+
+            ctx.fill();
+
+        }
+
+
+    });
+
+
+    requestAnimationFrame(drawStars);
+
+}
+
+
+drawStars();
+
+
+
+
+// ===============================
+// GRID TRACKING
+// ===============================
+
+
+window.addEventListener(
+"mousemove",
+(e)=>{
+
+let x =
+Math.floor(
+(e.clientX/window.innerWidth)*99
+);
+
+
+let y =
+Math.floor(
+(e.clientY/window.innerHeight)*99
+);
+
+
+
+coordDisplay.innerText =
+`GRID: X-${x} // Y-${y}`;
+
 
 });
 
+
+
+
+
+// ===============================
+// FIXED AUDIO ENGINE
+// ===============================
+
+
+let audioCtx = null;
+
+let audioReady = false;
+
+let queuedSounds = [];
+
+
+
+function initAudio(){
+
+
+    if(!audioCtx){
+
+        audioCtx =
+        new
+        (window.AudioContext ||
+        window.webkitAudioContext)();
+
+    }
+
+
+
+    if(audioCtx.state==="suspended"){
+
+        audioCtx.resume();
+
+    }
+
+
+
+    audioReady=true;
+
+
+
+    queuedSounds.forEach(sound=>{
+
+        createBeep(
+            sound.freq,
+            sound.duration,
+            sound.type
+        );
+
+    });
+
+
+
+    queuedSounds=[];
+
+
 }
 
 
 
-function starsLoop(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-ctx.fillStyle="white";
 
 
-stars.forEach(s=>{
+function createBeep(
+freq,
+duration,
+type="sine"
+){
 
 
-s.z-=2;
+try{
 
 
-if(s.z<1){
-
-s.z=canvas.width;
-
-}
+let osc =
+audioCtx.createOscillator();
 
 
-
-let k=200/s.z;
-
-
-let x=(s.x-canvas.width/2)*k+canvas.width/2;
-
-let y=(s.y-canvas.height/2)*k+canvas.height/2;
+let gain =
+audioCtx.createGain();
 
 
 
-ctx.beginPath();
-
-ctx.arc(x,y,2,0,Math.PI*2);
-
-ctx.fill();
+osc.type=type;
 
 
-
-});
-
-
-requestAnimationFrame(starsLoop);
-
-}
-
-
-starsLoop();
+osc.frequency.value=freq;
 
 
 
-
-
-// AUDIO
-
-
-let audio;
-
-
-function startAudio(){
-
-
-audio=new AudioContext();
+gain.gain.value=.04;
 
 
 
-const bootSounds=[
+gain.gain.exponentialRampToValueAtTime(
 
-[400,.1],
+0.00001,
 
-[600,.1],
+audioCtx.currentTime+duration
 
-[800,.1],
+);
 
-[1000,.2]
-
-];
-
-
-
-bootSounds.forEach((s,i)=>{
-
-
-setTimeout(()=>{
-
-
-let osc=audio.createOscillator();
-
-let gain=audio.createGain();
-
-
-
-osc.frequency.value=s[0];
-
-osc.type="square";
-
-
-gain.gain.value=.05;
 
 
 osc.connect(gain);
 
-gain.connect(audio.destination);
+gain.connect(audioCtx.destination);
 
 
 
 osc.start();
 
 
-osc.stop(audio.currentTime+s[1]);
+osc.stop(
+audioCtx.currentTime+duration
+);
 
 
 
-},i*400);
+}
 
+catch(e){}
 
-
-});
 
 
 }
 
 
 
-document.getElementById("boot").onclick=()=>{
 
 
-startAudio();
+function playBeep(
+freq,
+duration,
+type="sine"
+){
 
 
-document.getElementById("hud").innerHTML=
-
-`
-[OK] Audio drivers initialized.<br>
-[OK] Starfield engine online.<br>
-[OK] Navigation system ready.
-`;
+if(!audioReady){
 
 
+queuedSounds.push({
 
-document.getElementById("boot").innerHTML=
+freq,
+duration,
+type
 
-"✔ SYSTEM ONLINE";
+});
 
 
-};
+return;
 
 
+}
 
 
 
-// MOUSE GRID
+createBeep(
+freq,
+duration,
+type
+);
 
 
-document.onmousemove=e=>{
+}
 
 
-document.getElementById("coord").innerHTML=
-
-`GRID:X-${Math.floor(e.clientX/innerWidth*100)}
-Y-${Math.floor(e.clientY/innerHeight*100)}`;
 
 
-};
 
+// User gesture unlock
+
+[
+"click",
+"keydown",
+"touchstart"
+].forEach(event=>{
+
+window.addEventListener(
+event,
+initAudio,
+{once:true}
+);
+
+});
+
+
+
+
+
+
+// ===============================
+// BOOT SEQUENCE
+// ===============================
+
+
+const buttons =
+document.querySelectorAll('.gui-btn');
+
+
+const bootLogs=[
+
+"[OK] CS50x Subroutines Mounted.",
+
+"[OK] Stanford CodeInPlace Engine Hooked.",
+
+"[SYSTEM] Starfield engine responsive. System ready."
+
+];
+
+
+let logCounter=0;
+
+
+
+function runBooter(){
+
+
+if(logCounter < bootLogs.length){
+
+
+hud.innerHTML +=
+`<br>${bootLogs[logCounter]}`;
+
+
+playBeep(
+600,
+0.05,
+"square"
+);
+
+
+
+logCounter++;
+
+
+setTimeout(
+runBooter,
+700
+);
+
+
+}
+
+
+}
+
+
+
+setTimeout(
+runBooter,
+800
+);
+
+
+
+
+
+
+// ===============================
+// BUTTON EFFECTS
+// ===============================
+
+
+buttons.forEach(button=>{
+
+
+button.addEventListener(
+'mouseenter',
+()=>{
+
+
+speedMultiplier=4;
+
+
+hud.innerHTML =
+`[NAV_COM] ${button.dataset.desc}`;
+
+
+playBeep(
+880,
+0.08,
+"triangle"
+);
+
+
+});
+
+
+
+
+button.addEventListener(
+'mouseleave',
+()=>{
+
+
+speedMultiplier=1;
+
+
+hud.innerHTML =
+"[SYS] System cruise status active. Starfield stable.";
+
+
+});
+
+
+
+
+
+button.addEventListener(
+'click',
+()=>{
+
+
+playBeep(
+1200,
+0.15,
+"sawtooth"
+);
+
+
+});
+
+
+});
 
 
 </script>
-
-
+    
 </body>
 </html>
