@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SUSHANT_KHATRI // INTERSTELLAR_DECK</title>
+<title>SUSHANT KHATRI // INTERSTELLAR DECK</title>
 
 <style>
 
@@ -16,106 +16,83 @@
 }
 
 body{
-
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     background:#020208;
     color:#00f0ff;
     font-family:"Courier New",monospace;
-
-    overflow:hidden;
-    height:100vh;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
 }
 
 
 #starfield{
-
     position:absolute;
     inset:0;
-    z-index:1;
-
 }
 
 
 .overlay{
-
     position:absolute;
     inset:0;
+    z-index:2;
 
     background:
     linear-gradient(
-        rgba(18,16,16,0) 50%,
-        rgba(0,0,0,.15) 50%
-    ),
-    radial-gradient(
-        circle,
-        transparent 40%,
-        rgba(0,0,0,.7)
+    rgba(18,16,16,0) 50%,
+    rgba(0,0,0,.2) 50%
     );
 
-    background-size:100% 4px,100% 100%;
-    z-index:10;
-
+    background-size:100% 4px;
 }
 
 
-
-.gui-mainframe{
+.panel{
 
     position:relative;
     z-index:5;
 
     width:95%;
-    max-width:950px;
+    max-width:900px;
 
-    background:rgba(5,10,25,.75);
+    padding:30px;
+
+    background:rgba(5,10,25,.8);
 
     border:2px solid #00f0ff;
-    border-radius:12px;
-
-    padding:25px;
 
     box-shadow:
-    0 0 30px rgba(0,240,255,.15),
-    inset 0 0 15px rgba(0,240,255,.1);
-
-    backdrop-filter:blur(4px);
+    0 0 30px #00f0ff55,
+    inset 0 0 20px #00f0ff22;
 
 }
 
 
+.header{
 
-.gui-header{
+display:flex;
+justify-content:space-between;
 
-    display:flex;
-    justify-content:space-between;
+border-bottom:1px dashed #00f0ff;
 
-    border-bottom:1px dashed #00f0ff;
-
-    padding-bottom:10px;
-    margin-bottom:20px;
-
-    font-size:.8rem;
-    letter-spacing:2px;
+padding-bottom:10px;
+margin-bottom:20px;
 
 }
-
 
 
 h1{
 
-    font-size:2.8rem;
+font-size:3rem;
 
-    letter-spacing:6px;
+color:white;
 
-    color:white;
+letter-spacing:5px;
 
-    text-shadow:
-    0 0 10px #00f0ff,
-    0 0 20px #00f0ff;
+text-shadow:
+0 0 10px #00f0ff,
+0 0 20px #00f0ff;
 
 }
 
@@ -123,131 +100,85 @@ h1{
 
 .subtitle{
 
-    color:#ff0077;
+color:#ff0077;
 
-    margin:10px 0 20px;
-
-    text-shadow:0 0 5px #ff0077;
+margin:15px 0;
 
 }
 
 
 
-.hud-display{
+.hud{
 
-    background:rgba(0,0,0,.6);
+height:120px;
 
-    border:1px solid #ff0077;
+background:#0008;
 
-    border-left:4px solid #ff0077;
+border:1px solid #ff0077;
 
-    padding:15px;
+padding:15px;
 
-    height:110px;
+color:#a3e635;
 
-    margin-bottom:25px;
+margin-bottom:20px;
 
-    color:#a3e635;
-
-}
-
-
-
-.link-deck{
-
-    display:grid;
-
-    grid-template-columns:1fr 1fr;
-
-    gap:20px;
+overflow:hidden;
 
 }
 
 
 
-.gui-btn{
+button,.link{
 
-    padding:15px 25px;
+display:block;
 
-    display:flex;
+width:100%;
 
-    flex-direction:column;
+padding:15px;
 
-    text-decoration:none;
+margin:10px 0;
 
-    border:1px solid #00f0ff;
+background:transparent;
 
-    color:#00f0ff;
+border:1px solid #00f0ff;
 
-    background:rgba(0,240,255,.03);
+color:#00f0ff;
 
-    transition:.25s;
+font-family:inherit;
 
-}
+font-size:1rem;
 
+cursor:pointer;
 
-
-.gui-btn:hover{
-
-    background:#00f0ff;
-
-    color:#020208;
-
-    box-shadow:0 0 25px #00f0ff;
+text-decoration:none;
 
 }
 
 
 
-.alt{
+button:hover,.link:hover{
 
-    border-color:#ff0077;
+background:#00f0ff;
 
-    color:#ff0077;
-
-}
-
-
-
-.alt:hover{
-
-    background:#ff0077;
-
-    color:white;
-
-    box-shadow:0 0 25px #ff0077;
+color:#020208;
 
 }
 
 
 
-.btn-sub{
+#boot{
 
-    font-size:.7rem;
+background:#ff0077;
 
-    margin-top:5px;
+border-color:#ff0077;
 
-    color:#88a0c0;
+color:white;
 
-}
-
-
-
-@media(max-width:650px){
-
-.link-deck{
-
-grid-template-columns:1fr;
+font-weight:bold;
 
 }
 
-h1{
 
-font-size:1.8rem;
-
-}
-
-}
 
 </style>
 
@@ -262,18 +193,17 @@ font-size:1.8rem;
 <div class="overlay"></div>
 
 
+<div class="panel">
 
-<div class="gui-mainframe">
 
-
-<div class="gui-header">
+<div class="header">
 
 <div>
-SYS_STATUS: ACTIVE
+SYS_STATUS: OFFLINE
 </div>
 
-<div id="live-coord">
-GRID:X-00 // Y-00
+<div id="coord">
+GRID:X-00 Y-00
 </div>
 
 </div>
@@ -286,85 +216,49 @@ SUSHANT KHATRI
 
 
 <div class="subtitle">
-// NAV_DECK_INTERFACE_v2.5
+// INTERSTELLAR_NAV_DECK
+</div>
+
+
+<div class="hud" id="hud">
+
+[SYS] Waiting for launch authorization...
+
 </div>
 
 
 
-<div class="hud-display" id="hud-log">
-
-[SYS] Initializing localized stellar starfield...<br>
-
-[SYS] Audio drivers waiting for user authorization...
-
-</div>
+<button id="boot">
+🚀 START SYSTEM AUDIO
+</button>
 
 
-
-<div class="link-deck">
-
-
-<a class="gui-btn alt"
+<a class="link"
 href="https://www.youtube.com/@Sutolix"
-target="_blank"
-data-desc="Gaming challenges and entertainment streams loaded.">
+target="_blank">
 
 🎬 SUTOLIX YT
 
-<span class="btn-sub">
-Main Gaming Node
-</span>
-
 </a>
 
 
-
-<a class="gui-btn alt"
+<a class="link"
 href="https://www.youtube.com/@Runexel"
-target="_blank"
-data-desc="Developer tutorials and programming archives loaded.">
+target="_blank">
 
 💻 RUNEXEL DEV
 
-<span class="btn-sub">
-Software Engineering
-</span>
-
 </a>
 
 
-
-
-<a class="gui-btn"
+<a class="link"
 href="https://gitlab.com/SushantKhatri"
-target="_blank"
-data-desc="Secure code repository connection established.">
+target="_blank">
 
-🦊 GITLAB PROFILE
-
-<span class="btn-sub">
-Open Source Projects
-</span>
+🦊 GITLAB
 
 </a>
 
-
-
-<a class="gui-btn"
-href="https://sushantkhatridev.blogspot.com"
-target="_blank"
-data-desc="Developer logs downloaded.">
-
-📝 RECENT BLOGS
-
-<span class="btn-sub">
-Tech Articles
-</span>
-
-</a>
-
-
-</div>
 
 
 </div>
@@ -383,26 +277,14 @@ const canvas=document.getElementById("starfield");
 const ctx=canvas.getContext("2d");
 
 
-let stars=[];
-
-let speedMultiplier=1;
-
-
-function resize(){
-
 canvas.width=innerWidth;
-
 canvas.height=innerHeight;
 
-}
 
-resize();
-
-window.onresize=resize;
+let stars=[];
 
 
-
-for(let i=0;i<140;i++){
+for(let i=0;i<200;i++){
 
 stars.push({
 
@@ -410,9 +292,7 @@ x:Math.random()*canvas.width,
 
 y:Math.random()*canvas.height,
 
-z:Math.random()*canvas.width,
-
-size:Math.random()*1.5+.5
+z:Math.random()*canvas.width
 
 });
 
@@ -420,7 +300,7 @@ size:Math.random()*1.5+.5
 
 
 
-function drawStars(){
+function starsLoop(){
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
@@ -430,33 +310,29 @@ ctx.fillStyle="white";
 stars.forEach(s=>{
 
 
-s.z-=1.5*speedMultiplier;
+s.z-=2;
 
 
-if(s.z<=0){
+if(s.z<1){
 
 s.z=canvas.width;
-
-s.x=Math.random()*canvas.width;
-
-s.y=Math.random()*canvas.height;
 
 }
 
 
 
-let k=128/s.z;
+let k=200/s.z;
 
 
-let px=(s.x-canvas.width/2)*k+canvas.width/2;
+let x=(s.x-canvas.width/2)*k+canvas.width/2;
 
-let py=(s.y-canvas.height/2)*k+canvas.height/2;
+let y=(s.y-canvas.height/2)*k+canvas.height/2;
 
 
 
 ctx.beginPath();
 
-ctx.arc(px,py,Math.min(s.size*k,3),0,Math.PI*2);
+ctx.arc(x,y,2,0,Math.PI*2);
 
 ctx.fill();
 
@@ -465,266 +341,128 @@ ctx.fill();
 });
 
 
-requestAnimationFrame(drawStars);
+requestAnimationFrame(starsLoop);
 
 }
 
 
-drawStars();
+starsLoop();
 
 
 
 
 
-// COORD DISPLAY
+// AUDIO
 
 
-const coord=document.getElementById("live-coord");
+let audio;
 
 
-window.onmousemove=e=>{
+function startAudio(){
 
 
-coord.innerHTML=
-`GRID:X-${Math.floor(e.clientX/innerWidth*99)}
-// Y-${Math.floor(e.clientY/innerHeight*99)}`;
+audio=new AudioContext();
 
-};
 
 
+const bootSounds=[
 
+[400,.1],
 
+[600,.1],
 
+[800,.1],
 
+[1000,.2]
 
-// AUDIO SYSTEM FIXED
+];
 
 
-let audioCtx=null;
 
-let audioUnlocked=false;
+bootSounds.forEach((s,i)=>{
 
-let audioQueue=[];
 
+setTimeout(()=>{
 
 
-function initAudio(){
+let osc=audio.createOscillator();
 
+let gain=audio.createGain();
 
-if(!audioCtx){
 
-audioCtx=new AudioContext();
 
-}
+osc.frequency.value=s[0];
 
+osc.type="square";
 
-if(audioCtx.state==="suspended"){
 
-audioCtx.resume();
-
-}
-
-
-audioUnlocked=true;
-
-
-
-audioQueue.forEach(s=>{
-
-playBeep(
-s.freq,
-s.duration,
-s.type
-);
-
-});
-
-
-audioQueue=[];
-
-
-}
-
-
-
-
-
-["click","keydown","touchstart"].forEach(e=>{
-
-window.addEventListener(e,initAudio,{once:true});
-
-});
-
-
-
-
-
-function playBeep(freq,duration,type="sine"){
-
-
-
-if(!audioUnlocked){
-
-audioQueue.push({
-
-freq,
-duration,
-type
-
-});
-
-return;
-
-}
-
-
-
-let osc=audioCtx.createOscillator();
-
-let gain=audioCtx.createGain();
-
-
-osc.type=type;
-
-osc.frequency.value=freq;
-
-
-gain.gain.value=.04;
-
-
-gain.gain.exponentialRampToValueAtTime(
-
-0.00001,
-
-audioCtx.currentTime+duration
-
-);
-
+gain.gain.value=.05;
 
 
 osc.connect(gain);
 
-gain.connect(audioCtx.destination);
+gain.connect(audio.destination);
 
 
 
 osc.start();
 
-osc.stop(
 
-audioCtx.currentTime+duration
+osc.stop(audio.currentTime+s[1]);
 
-);
 
 
-}
-
-
-
-
-
-
-
-// HUD EVENTS
-
-
-
-const hud=document.getElementById("hud-log");
-
-
-const buttons=document.querySelectorAll(".gui-btn");
-
-
-
-let logs=[
-
-"[OK] CS50x Modules Mounted.",
-
-"[OK] Stanford CodeInPlace Engine Hooked.",
-
-"[SYSTEM] Interface Ready."
-
-];
-
-
-let index=0;
-
-
-
-function runBooter(){
-
-
-if(index<logs.length){
-
-
-hud.innerHTML+=
-"<br>"+logs[index];
-
-
-playBeep(600,.05,"square");
-
-
-index++;
-
-
-setTimeout(runBooter,700);
-
-
-}
-
-
-}
-
-
-
-setTimeout(runBooter,800);
-
-
-
-
-
-buttons.forEach(btn=>{
-
-
-btn.onmouseenter=()=>{
-
-
-speedMultiplier=4;
-
-
-hud.innerHTML="[NAV_COM] "+btn.dataset.desc;
-
-
-playBeep(880,.08,"triangle");
-
-
-};
-
-
-
-btn.onmouseleave=()=>{
-
-
-speedMultiplier=1;
-
-
-hud.innerHTML=
-"[SYS] Starfield stable.";
-
-
-};
-
-
-
-btn.onclick=()=>{
-
-playBeep(1200,.15,"sawtooth");
-
-};
+},i*400);
 
 
 
 });
+
+
+}
+
+
+
+document.getElementById("boot").onclick=()=>{
+
+
+startAudio();
+
+
+document.getElementById("hud").innerHTML=
+
+`
+[OK] Audio drivers initialized.<br>
+[OK] Starfield engine online.<br>
+[OK] Navigation system ready.
+`;
+
+
+
+document.getElementById("boot").innerHTML=
+
+"✔ SYSTEM ONLINE";
+
+
+};
+
+
+
+
+
+// MOUSE GRID
+
+
+document.onmousemove=e=>{
+
+
+document.getElementById("coord").innerHTML=
+
+`GRID:X-${Math.floor(e.clientX/innerWidth*100)}
+Y-${Math.floor(e.clientY/innerHeight*100)}`;
+
+
+};
 
 
 
