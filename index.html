@@ -423,187 +423,225 @@ coordDisplay.innerText =
 // ===============================
 
 
+// --- SYNTHETIC WEB AUDIO API FUNCTIONS (FIXED) ---
+
 let audioCtx = null;
-
 let audioReady = false;
+let audioQueue = [];
 
-let queuedSounds = [];
+function initAudio() {
 
-
-
-function initAudio(){
-
-
-    if(!audioCtx){
-
-        audioCtx =
-        new
-        (window.AudioContext ||
-        window.webkitAudioContext)();
-
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
 
-
-
-    if(audioCtx.state==="suspended"){
-
+    if (audioCtx.state === "suspended") {
         audioCtx.resume();
-
     }
 
+    audioReady = true;
 
-
-    audioReady=true;
-
-
-
-    queuedSounds.forEach(sound=>{
-
+    // Play sounds created before unlock
+    audioQueue.forEach(sound => {
         createBeep(
             sound.freq,
             sound.duration,
             sound.type
         );
-
     });
 
+    audioQueue = [];
+}
 
 
-    queuedSounds=[];
+function createBeep(freq, duration, type="sine") {
 
+    try {
+
+        let osc = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+
+        osc.type = type;
+
+        osc.frequency.setValueAtTime(
+            freq,
+            audioCtx.currentTime
+        );
+
+        gain.gain.setValueAtTime(
+            0.04,
+            audioCtx.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.00001,
+            audioCtx.currentTime + duration
+        );
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+
+        osc.stop(
+            audioCtx.currentTime + duration
+        );
+
+    } catch(e) {
+        console.log(e);
+    }
 
 }
 
 
 
+function playBeep(freq, duration, type="sine") {
 
+    // Browser blocks autoplay before interaction
+    if (!audioReady) {
 
-function createBeep(
-freq,
-duration,
-type="sine"
-){
+        audioQueue.push({
+            freq: freq,
+            duration: duration,
+            type: type
+        });
 
+        return;
+    }
 
-try{
-
-
-let osc =
-audioCtx.createOscillator();
-
-
-let gain =
-audioCtx.createGain();
-
-
-
-osc.type=type;
-
-
-osc.frequency.value=freq;
-
-
-
-gain.gain.value=.04;
-
-
-
-gain.gain.exponentialRampToValueAtTime(
-
-0.00001,
-
-audioCtx.currentTime+duration
-
-);
-
-
-
-osc.connect(gain);
-
-gain.connect(audioCtx.destination);
-
-
-
-osc.start();
-
-
-osc.stop(
-audioCtx.currentTime+duration
-);
-
-
-
-}
-
-catch(e){}
-
-
+    createBeep(
+        freq,
+        duration,
+        type
+    );
 
 }
 
 
-
-
-
-function playBeep(
-freq,
-duration,
-type="sine"
-){
-
-
-if(!audioReady){
-
-
-queuedSounds.push({
-
-freq,
-duration,
-type
-
-});
-
-
-return;
-
-
-}
-
-
-
-createBeep(
-freq,
-duration,
-type
-);
-
-
-}
-
-
-
-
-
-// User gesture unlock
-
+// Unlock audio after user interaction
 [
-"click",
-"keydown",
-"touchstart"
-].forEach(event=>{
+    "click",
+    "keydown",
+    "touchstart"
+].forEach(event => {
 
-window.addEventListener(
-event,
-initAudio,
-{once:true}
-);
+    window.addEventListener(
+        event,
+        initAudio,
+        {once:true}
+    );
 
 });
 
 
 
 
+// --- EVENT INTERACTION HANDLERS ---
 
+const buttons = document.querySelectorAll('.gui-btn');
+
+const bootLogs = [
+    "[OK] CS50x Subroutines Mounted.",
+    "[OK] Stanford CodeInPlace Engine Hooked.",
+    "[SYSTEM] Starfield engine responsive. System ready."
+];
+
+
+let logCounter = 0;
+
+
+function runBooter() {
+
+    if (logCounter < bootLogs.length) {
+
+        hud.innerHTML +=
+        `<br>${bootLogs[logCounter]}`;
+
+
+        playBeep(
+            600,
+            0.05,
+            "square"
+        );
+
+
+        logCounter++;
+
+        setTimeout(
+            runBooter,
+            700
+        );
+
+    }
+
+}
+
+
+setTimeout(
+    runBooter,
+    800
+);
+
+
+
+buttons.forEach(button => {
+
+
+    button.addEventListener(
+        'mouseenter',
+        () => {
+
+            speedMultiplier = 4;
+
+            const desc =
+            button.getAttribute('data-desc');
+
+
+            hud.innerHTML =
+            `[NAV_COM] ${desc}`;
+
+
+            playBeep(
+                880,
+                0.08,
+                "triangle"
+            );
+
+        }
+    );
+
+
+
+    button.addEventListener(
+        'mouseleave',
+        () => {
+
+            speedMultiplier = 1;
+
+            hud.innerHTML =
+            "[SYS] System cruise status active. Starfield stable.";
+
+        }
+    );
+
+
+
+    button.addEventListener(
+        'click',
+        () => {
+
+            playBeep(
+                1200,
+                0.15,
+                "sawtooth"
+            );
+
+        }
+    );
+
+
+});
+    
 
 // ===============================
 // BOOT SEQUENCE
