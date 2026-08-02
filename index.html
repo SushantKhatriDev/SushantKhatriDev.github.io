@@ -1,350 +1,735 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUSHANT_KHATRI // INTERSTELLAR_DECK</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-        }
-        body {
-            background-color: #020208;
-            color: #00f0ff;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* Starfield Canvas Background */
-        #starfield {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
+<title>SUSHANT_KHATRI // INTERSTELLAR_DECK</title>
 
-        /* Scanline & Vignette Overlay */
-        .overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
-                        radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(0,0,0,0.7) 100%);
-            background-size: 100% 4px, 100% 100%;
-            z-index: 10;
-            pointer-events: none;
-        }
+<style>
 
-        /* Main Cyber Frame */
-        .gui-mainframe {
-            position: relative;
-            z-index: 5;
-            width: 95%;
-            max-width: 950px;
-            background: rgba(5, 10, 25, 0.75);
-            border: 2px solid #00f0ff;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15), inset 0 0 15px rgba(0, 240, 255, 0.1);
-            backdrop-filter: blur(4px);
-        }
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    user-select:none;
+}
 
-        /* Top Bar Info Decorators */
-        .gui-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px dashed #00f0ff;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-        }
+body{
 
-        h1 {
-            font-size: 2.8rem;
-            text-transform: uppercase;
-            letter-spacing: 6px;
-            color: #fff;
-            text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
-            margin: 10px 0;
-        }
+    background:#020208;
+    color:#00f0ff;
+    font-family:"Courier New",monospace;
 
-        .subtitle {
-            font-size: 1.1rem;
-            color: #ff0077;
-            text-shadow: 0 0 5px #ff0077;
-            margin-bottom: 20px;
-        }
+    overflow:hidden;
+    height:100vh;
 
-        /* Tactical HUD Log Box */
-        .hud-display {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid #ff0077;
-            border-left: 4px solid #ff0077;
-            padding: 15px;
-            margin-bottom: 25px;
-            font-size: 0.9rem;
-            color: #a3e635;
-            height: 110px;
-            overflow-y: hidden;
-            box-shadow: inset 0 0 10px rgba(255, 0, 119, 0.1);
-        }
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-        /* Grid Interface Link Buttons */
-        .link-deck {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
+}
 
-        @media (max-width: 650px) {
-            .link-deck { grid-template-columns: 1fr; }
-            h1 { font-size: 1.8rem; }
-        }
 
-        .gui-btn {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 15px 25px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            text-decoration: none;
-            letter-spacing: 2px;
-            border: 1px solid #00f0ff;
-            color: #00f0ff;
-            background: rgba(0, 240, 255, 0.03);
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.15, 0.85, 0.45, 1);
-            position: relative;
-        }
+#starfield{
 
-        .gui-btn .btn-sub {
-            font-size: 0.7rem;
-            color: #88a0c0;
-            margin-top: 4px;
-            letter-spacing: 1px;
-            text-transform: none;
-        }
+    position:absolute;
+    inset:0;
+    z-index:1;
 
-        /* Hover Mechanics controlled by CSS & JS rules */
-        .gui-btn:hover {
-            color: #020208;
-            background: #00f0ff;
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
-            transform: scale(1.02);
-        }
-        .gui-btn:hover .btn-sub {
-            color: #020208;
-        }
+}
 
-        /* Alternate color theme for main platforms */
-        .gui-btn.alt {
-            border-color: #ff0077;
-            color: #ff0077;
-            background: rgba(255, 0, 119, 0.03);
-        }
-        .gui-btn.alt:hover {
-            color: #fff;
-            background: #ff0077;
-            box-shadow: 0 0 25px rgba(255, 0, 119, 0.6);
-        }
-    </style>
+
+.overlay{
+
+    position:absolute;
+    inset:0;
+
+    background:
+    linear-gradient(
+        rgba(18,16,16,0) 50%,
+        rgba(0,0,0,.15) 50%
+    ),
+    radial-gradient(
+        circle,
+        transparent 40%,
+        rgba(0,0,0,.7)
+    );
+
+    background-size:100% 4px,100% 100%;
+    z-index:10;
+
+}
+
+
+
+.gui-mainframe{
+
+    position:relative;
+    z-index:5;
+
+    width:95%;
+    max-width:950px;
+
+    background:rgba(5,10,25,.75);
+
+    border:2px solid #00f0ff;
+    border-radius:12px;
+
+    padding:25px;
+
+    box-shadow:
+    0 0 30px rgba(0,240,255,.15),
+    inset 0 0 15px rgba(0,240,255,.1);
+
+    backdrop-filter:blur(4px);
+
+}
+
+
+
+.gui-header{
+
+    display:flex;
+    justify-content:space-between;
+
+    border-bottom:1px dashed #00f0ff;
+
+    padding-bottom:10px;
+    margin-bottom:20px;
+
+    font-size:.8rem;
+    letter-spacing:2px;
+
+}
+
+
+
+h1{
+
+    font-size:2.8rem;
+
+    letter-spacing:6px;
+
+    color:white;
+
+    text-shadow:
+    0 0 10px #00f0ff,
+    0 0 20px #00f0ff;
+
+}
+
+
+
+.subtitle{
+
+    color:#ff0077;
+
+    margin:10px 0 20px;
+
+    text-shadow:0 0 5px #ff0077;
+
+}
+
+
+
+.hud-display{
+
+    background:rgba(0,0,0,.6);
+
+    border:1px solid #ff0077;
+
+    border-left:4px solid #ff0077;
+
+    padding:15px;
+
+    height:110px;
+
+    margin-bottom:25px;
+
+    color:#a3e635;
+
+}
+
+
+
+.link-deck{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
+
+
+
+.gui-btn{
+
+    padding:15px 25px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    text-decoration:none;
+
+    border:1px solid #00f0ff;
+
+    color:#00f0ff;
+
+    background:rgba(0,240,255,.03);
+
+    transition:.25s;
+
+}
+
+
+
+.gui-btn:hover{
+
+    background:#00f0ff;
+
+    color:#020208;
+
+    box-shadow:0 0 25px #00f0ff;
+
+}
+
+
+
+.alt{
+
+    border-color:#ff0077;
+
+    color:#ff0077;
+
+}
+
+
+
+.alt:hover{
+
+    background:#ff0077;
+
+    color:white;
+
+    box-shadow:0 0 25px #ff0077;
+
+}
+
+
+
+.btn-sub{
+
+    font-size:.7rem;
+
+    margin-top:5px;
+
+    color:#88a0c0;
+
+}
+
+
+
+@media(max-width:650px){
+
+.link-deck{
+
+grid-template-columns:1fr;
+
+}
+
+h1{
+
+font-size:1.8rem;
+
+}
+
+}
+
+</style>
+
 </head>
+
+
 <body>
 
+
 <canvas id="starfield"></canvas>
+
 <div class="overlay"></div>
 
+
+
 <div class="gui-mainframe">
-    <div class="gui-header">
-        <div>SYS_STATUS: ACTIVE</div>
-        <div id="live-coord">GRID: X-00 // Y-00</div>
-    </div>
 
-    <h1>SUSHANT KHATRI</h1>
-    <div class="subtitle">// NAV_DECK_INTERFACE_v2.5</div>
 
-    <div class="hud-display" id="hud-log">
-        [SYS] Initializing localized stellar starfield...<br>
-        [SYS] Audio synthesis microcode compiled. Click anywhere to engage audio drivers.<br>
-    </div>
+<div class="gui-header">
 
-    <div class="link-deck">
-        <a class="gui-btn alt" href="https://www.youtube.com/@Sutolix" target="_blank" data-desc="Frequencies tuned to gaming challenges & Blox Fruits broadcasts.">
-            🎬 SUTOLIX YT
-            <span class="btn-sub">Main Gaming & Entertainment Node</span>
-        </a>
-        <a class="gui-btn alt" href="https://www.youtube.com/@Runexel" target="_blank" data-desc="Accessing code architecture, tutorial archives, and project devlogs.">
-            💻 RUNEXEL DEV
-            <span class="btn-sub">Software Engineering and Scripts</span>
-        </a>
-        <a class="gui-btn" href="https://gitlab.com/SushantKhatri" target="_blank" data-desc="Establishing connection to secure decentralized code framework vaults.">
-            🦊 GITLAB PROFILE
-            <span class="btn-sub">Open-source Repositories & Utilities</span>
-        </a>
-        <a class="gui-btn" href="https://sushantkhatridev.blogspot.com" target="_blank" data-desc="Downloading text array modules containing developer logs.">
-            📝 RECENT BLOGS
-            <span class="btn-sub">Tech Logs & Conceptual Work</span>
-        </a>
-    </div>
+<div>
+SYS_STATUS: ACTIVE
 </div>
 
+<div id="live-coord">
+GRID:X-00 // Y-00
+</div>
+
+</div>
+
+
+
+<h1>
+SUSHANT KHATRI
+</h1>
+
+
+<div class="subtitle">
+// NAV_DECK_INTERFACE_v2.5
+</div>
+
+
+
+<div class="hud-display" id="hud-log">
+
+[SYS] Initializing localized stellar starfield...<br>
+
+[SYS] Audio drivers waiting for user authorization...
+
+</div>
+
+
+
+<div class="link-deck">
+
+
+<a class="gui-btn alt"
+href="https://www.youtube.com/@Sutolix"
+target="_blank"
+data-desc="Gaming challenges and entertainment streams loaded.">
+
+🎬 SUTOLIX YT
+
+<span class="btn-sub">
+Main Gaming Node
+</span>
+
+</a>
+
+
+
+<a class="gui-btn alt"
+href="https://www.youtube.com/@Runexel"
+target="_blank"
+data-desc="Developer tutorials and programming archives loaded.">
+
+💻 RUNEXEL DEV
+
+<span class="btn-sub">
+Software Engineering
+</span>
+
+</a>
+
+
+
+
+<a class="gui-btn"
+href="https://gitlab.com/SushantKhatri"
+target="_blank"
+data-desc="Secure code repository connection established.">
+
+🦊 GITLAB PROFILE
+
+<span class="btn-sub">
+Open Source Projects
+</span>
+
+</a>
+
+
+
+<a class="gui-btn"
+href="https://sushantkhatridev.blogspot.com"
+target="_blank"
+data-desc="Developer logs downloaded.">
+
+📝 RECENT BLOGS
+
+<span class="btn-sub">
+Tech Articles
+</span>
+
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
+
 <script>
-    const hud = document.getElementById('hud-log');
-    const coordDisplay = document.getElementById('live-coord');
 
-    // --- INTERACTIVE STARFIELD BACKGROUND (CANVAS) ---
-    const canvas = document.getElementById('starfield');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-    let numStars = 140;
-    let speedMultiplier = 1;
 
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+// STARFIELD
 
-    // Initialize Star Instances
-    for (let i = 0; i < numStars; i++) {
-        stars.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            z: Math.random() * canvas.width,
-            size: Math.random() * 1.5 + 0.5
-        });
-    }
 
-    function drawStars() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-        
-        for (let i = 0; i < numStars; i++) {
-            let star = stars[i];
-            star.z -= 1.5 * speedMultiplier;
-            
-            if (star.z <= 0) {
-                star.z = canvas.width;
-                star.x = Math.random() * canvas.width;
-                star.y = Math.random() * canvas.height;
-            }
+const canvas=document.getElementById("starfield");
 
-            // Simple 3D projection shift
-            let k = 128 / star.z;
-            let px = (star.x - canvas.width / 2) * k + canvas.width / 2;
-            let py = (star.y - canvas.height / 2) * k + canvas.height / 2;
+const ctx=canvas.getContext("2d");
 
-            if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
-                let size = star.size * k;
-                ctx.beginPath();
-                ctx.arc(px, py, Math.min(size, 3), 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-        requestAnimationFrame(drawStars);
-    }
-    drawStars();
 
-    // Mouse Tracking Mechanics
-    window.addEventListener('mousemove', (e) => {
-        let xPerc = Math.floor((e.clientX / window.innerWidth) * 99);
-        let yPerc = Math.floor((e.clientY / window.innerHeight) * 99);
-        coordDisplay.innerText = `GRID: X-${xPerc} // Y-${yPerc}`;
-    });
+let stars=[];
 
-    // --- SYNTHETIC WEB AUDIO API FUNCTIONS ---
-    let audioCtx = null;
-    function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    }
+let speedMultiplier=1;
 
-    // Unlock audio context cleanly on the first user interaction anywhere on the page
-    ['click', 'keydown', 'touchstart'].forEach(eventType => {
-        window.addEventListener(eventType, () => {
-            initAudio();
-        }, { once: true });
-    });
 
-    function playBeep(freq, duration, type = 'sine') {
-        try {
-            initAudio();
-            if (!audioCtx || audioCtx.state !== 'running') return;
-            
-            let osc = audioCtx.createOscillator();
-            let gain = audioCtx.createGain();
-            
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
-        } catch(e) {}
-    }
+function resize(){
 
-    // --- EVENT INTERACTION HANDLERS ---
-    const buttons = document.querySelectorAll('.gui-btn');
-    const bootLogs = [
-        "[OK] CS50x Subroutines Mounted.",
-        "[OK] Stanford CodeInPlace Engine Hooked.",
-        "[SYSTEM] Starfield engine responsive. System ready."
-    ];
+canvas.width=innerWidth;
 
-    let logCounter = 0;
-    function runBooter() {
-        if (logCounter < bootLogs.length) {
-            hud.innerHTML += `<br>${bootLogs[logCounter]}`;
-            playBeep(600, 0.05, 'square');
-            logCounter++;
-            setTimeout(runBooter, 700);
-        }
-    }
-    setTimeout(runBooter, 800);
+canvas.height=innerHeight;
 
-    buttons.forEach(button => {
-        button.addEventListener('mouseenter', () => {
-            speedMultiplier = 4; // Warp speed space background
-            const desc = button.getAttribute('data-desc');
-            hud.innerHTML = `[NAV_COM] ${desc}`;
-            playBeep(880, 0.08, 'triangle');
-        });
+}
 
-        button.addEventListener('mouseleave', () => {
-            speedMultiplier = 1; // Back to cruise speed
-            hud.innerHTML = `[SYS] System cruise status active. Starfield stable.`;
-        });
+resize();
 
-        button.addEventListener('click', () => {
-            playBeep(1200, 0.15, 'sawtooth');
-        });
-    });
+window.onresize=resize;
+
+
+
+for(let i=0;i<140;i++){
+
+stars.push({
+
+x:Math.random()*canvas.width,
+
+y:Math.random()*canvas.height,
+
+z:Math.random()*canvas.width,
+
+size:Math.random()*1.5+.5
+
+});
+
+}
+
+
+
+function drawStars(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="white";
+
+
+stars.forEach(s=>{
+
+
+s.z-=1.5*speedMultiplier;
+
+
+if(s.z<=0){
+
+s.z=canvas.width;
+
+s.x=Math.random()*canvas.width;
+
+s.y=Math.random()*canvas.height;
+
+}
+
+
+
+let k=128/s.z;
+
+
+let px=(s.x-canvas.width/2)*k+canvas.width/2;
+
+let py=(s.y-canvas.height/2)*k+canvas.height/2;
+
+
+
+ctx.beginPath();
+
+ctx.arc(px,py,Math.min(s.size*k,3),0,Math.PI*2);
+
+ctx.fill();
+
+
+
+});
+
+
+requestAnimationFrame(drawStars);
+
+}
+
+
+drawStars();
+
+
+
+
+
+// COORD DISPLAY
+
+
+const coord=document.getElementById("live-coord");
+
+
+window.onmousemove=e=>{
+
+
+coord.innerHTML=
+`GRID:X-${Math.floor(e.clientX/innerWidth*99)}
+// Y-${Math.floor(e.clientY/innerHeight*99)}`;
+
+};
+
+
+
+
+
+
+
+// AUDIO SYSTEM FIXED
+
+
+let audioCtx=null;
+
+let audioUnlocked=false;
+
+let audioQueue=[];
+
+
+
+function initAudio(){
+
+
+if(!audioCtx){
+
+audioCtx=new AudioContext();
+
+}
+
+
+if(audioCtx.state==="suspended"){
+
+audioCtx.resume();
+
+}
+
+
+audioUnlocked=true;
+
+
+
+audioQueue.forEach(s=>{
+
+playBeep(
+s.freq,
+s.duration,
+s.type
+);
+
+});
+
+
+audioQueue=[];
+
+
+}
+
+
+
+
+
+["click","keydown","touchstart"].forEach(e=>{
+
+window.addEventListener(e,initAudio,{once:true});
+
+});
+
+
+
+
+
+function playBeep(freq,duration,type="sine"){
+
+
+
+if(!audioUnlocked){
+
+audioQueue.push({
+
+freq,
+duration,
+type
+
+});
+
+return;
+
+}
+
+
+
+let osc=audioCtx.createOscillator();
+
+let gain=audioCtx.createGain();
+
+
+osc.type=type;
+
+osc.frequency.value=freq;
+
+
+gain.gain.value=.04;
+
+
+gain.gain.exponentialRampToValueAtTime(
+
+0.00001,
+
+audioCtx.currentTime+duration
+
+);
+
+
+
+osc.connect(gain);
+
+gain.connect(audioCtx.destination);
+
+
+
+osc.start();
+
+osc.stop(
+
+audioCtx.currentTime+duration
+
+);
+
+
+}
+
+
+
+
+
+
+
+// HUD EVENTS
+
+
+
+const hud=document.getElementById("hud-log");
+
+
+const buttons=document.querySelectorAll(".gui-btn");
+
+
+
+let logs=[
+
+"[OK] CS50x Modules Mounted.",
+
+"[OK] Stanford CodeInPlace Engine Hooked.",
+
+"[SYSTEM] Interface Ready."
+
+];
+
+
+let index=0;
+
+
+
+function runBooter(){
+
+
+if(index<logs.length){
+
+
+hud.innerHTML+=
+"<br>"+logs[index];
+
+
+playBeep(600,.05,"square");
+
+
+index++;
+
+
+setTimeout(runBooter,700);
+
+
+}
+
+
+}
+
+
+
+setTimeout(runBooter,800);
+
+
+
+
+
+buttons.forEach(btn=>{
+
+
+btn.onmouseenter=()=>{
+
+
+speedMultiplier=4;
+
+
+hud.innerHTML="[NAV_COM] "+btn.dataset.desc;
+
+
+playBeep(880,.08,"triangle");
+
+
+};
+
+
+
+btn.onmouseleave=()=>{
+
+
+speedMultiplier=1;
+
+
+hud.innerHTML=
+"[SYS] Starfield stable.";
+
+
+};
+
+
+
+btn.onclick=()=>{
+
+playBeep(1200,.15,"sawtooth");
+
+};
+
+
+
+});
+
+
+
 </script>
+
 
 </body>
 </html>
