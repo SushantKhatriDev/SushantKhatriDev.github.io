@@ -43,3 +43,7 @@ Open `http://localhost:8000` in your browser.
 ## Deployment
 
 Hosted on **GitHub Pages** at `https://SushantKhatriDev.github.io`. Stage, commit, and push changes to the `main` branch to publish updates.
+## Tech Stack
+
+- **Frontend:** Semantic HTML5, modular CSS3, and vanilla ES6+ JavaScript
+- **Audio & Graphics:** Web Audio API synthesizer, YouTube IFrame API, and HTML5 Canvas particle starfield
